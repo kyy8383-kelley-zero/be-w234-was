@@ -37,11 +37,11 @@ public class RequestHandler implements Runnable {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, Charsets.UTF_8));
 
         String line = br.readLine();
-        System.out.println(line);
+        logger.info(line);
         String htmlPath = getHtmlPath(line);
 
         while (StringUtils.isNotBlank(line = br.readLine())) {
-            System.out.println(line);
+            logger.info(line);
         }
 
         try {
