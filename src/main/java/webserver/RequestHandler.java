@@ -33,19 +33,15 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void printRequest(InputStream in) {
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String line = br.readLine();
-            while (!"".equals(line)) {
-                line = br.readLine();
-                logger.debug("header: {}", line);
-                if (line == null) {
-                    return;
-                }
+    private void printRequest(InputStream in) throws UnsupportedEncodingException, IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+        String line = br.readLine();
+        while (!"".equals(line)) {
+            line = br.readLine();
+            logger.debug("header: {}", line);
+            if (line == null) {
+                return;
             }
-        } catch (IOException e) {
-            logger.error(e.getMessage());
         }
     }
 
