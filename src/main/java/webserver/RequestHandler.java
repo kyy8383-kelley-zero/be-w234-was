@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RequestHandler implements Runnable {
-    private final String RESOURCE_DIR = "src/main/webapp";
+    private final String RESOURCE_DIR = "webapp";
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
