@@ -41,7 +41,7 @@ public class RequestPacket {
         try {
             lineitem = br.readLine().split(" ");
             this.header.method = lineitem[0];
-            this.header.url = lineitem[1];
+            this.header.setUrl(lineitem[1]);
             this.header.httpVersion = lineitem[2];
         } catch (IOException e) {
             throw new RuntimeException(e);

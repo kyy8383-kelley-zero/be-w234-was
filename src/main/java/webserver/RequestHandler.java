@@ -28,7 +28,7 @@ public class RequestHandler implements Runnable {
             reqPacket = new RequestPacket(in);
             reqPacket.prn();
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = getResource(reqPacket.header.url);
+            byte[] body = getResource();
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
@@ -36,12 +36,9 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private byte[] getResource(String url) {
-        try {
-            return Files.readAllBytes(new File("./webapp" + url).toPath());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    private byte[] getResource() {
+        backend.route(reqPacket.header.method, reqPacket.header.url, reqPacket.header.params);
+        return backend.getResponse();
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
