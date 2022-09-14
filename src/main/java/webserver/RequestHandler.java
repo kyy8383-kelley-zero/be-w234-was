@@ -2,6 +2,7 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
 
 import http.RequestPacket;
 import org.slf4j.Logger;
@@ -31,7 +32,6 @@ public class RequestHandler implements Runnable {
             reqPacket.prn();
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = getResource(reqPacket.header.url);
-//            byte[] body = "Hello World".getBytes();
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
@@ -40,8 +40,11 @@ public class RequestHandler implements Runnable {
     }
 
     private byte[] getResource(String url) {
-        System.out.println("url: " + url);
-        return "Hello packet".getBytes();
+        try {
+            return Files.readAllBytes(new File("./webapp" + url).toPath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
