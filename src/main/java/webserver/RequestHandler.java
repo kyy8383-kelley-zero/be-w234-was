@@ -3,6 +3,7 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.util.Map;
 
 import com.github.jknack.handlebars.internal.lang3.StringUtils;
 import com.google.common.base.Charsets;
@@ -10,22 +11,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RequestHandler implements Runnable {
-    private final String HTML_DIR = "src/main/webapp";
+    private final String RESOURCE_DIR = "src/main/webapp";
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
+    private RequestParser requestParser;
 
-    public RequestHandler(Socket connectionSocket) {
+    public RequestHandler(Socket connectionSocket) throws Exception {
         this.connection = connectionSocket;
+        this.requestParser = new RequestParser(connection.getInputStream());
     }
 
     public void run() {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
+        printRequest();
 
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
+        try (OutputStream out = connection.getOutputStream()) {
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = generateBody(in);
+            byte[] body = generateBody();
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
@@ -33,26 +37,26 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private byte[] generateBody(InputStream in) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, Charsets.UTF_8));
+    private void printRequest() {
+        logger.debug("method : " + requestParser.method);
+        logger.debug("path : " + requestParser.path);
+        logger.debug("version : " + requestParser.version);
 
-        String line = br.readLine();
-        logger.info(line);
-        String htmlPath = getHtmlPath(line);
-
-        while (StringUtils.isNotBlank(line = br.readLine())) {
-            logger.info(line);
+        for (Map.Entry<String, String> entry : requestParser.headers.entrySet()) {
+            logger.debug(entry.getKey() + " : " + entry.getValue());
         }
+    }
 
+    private byte[] generateBody() {
         try {
-            return generateHtmlBody(htmlPath);
+            return generateHtmlBody(getResourcePath(requestParser.path));
         } catch (Exception e) {
             return generateDefaultBody();
         }
     }
 
-    private String getHtmlPath(String line) {
-        return HTML_DIR + line.split(" ")[1];
+    private String getResourcePath(String path) {
+        return RESOURCE_DIR + path;
     }
 
     private byte[] generateHtmlBody(String path) throws IOException {
