@@ -13,10 +13,7 @@ public class RequestHandler implements Runnable {
 
     private Socket connection;
     private RequestPacket reqPacket;
-    private static final String REQ_GET = "GET";
-    private static final String REQ_HOST = "Host:";
-    private static final String REQ_USER_AGENT = "User-Agent:";
-    private static final String REQ_ACCEPT = "Accept:";
+    private Backend backend = new Backend();
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
