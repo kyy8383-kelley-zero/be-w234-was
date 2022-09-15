@@ -1,10 +1,10 @@
 package webserver;
 
-import com.google.common.base.Strings;
+import model.HttpRequestHeader;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequestUtils;
+import service.HttpRequestHeaderParser;
 
 import java.io.*;
 import java.net.Socket;
@@ -14,8 +14,6 @@ import java.util.Map;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-
-    public static final String QUERY_STRING_DELIMITER = "\\?";
 
     private final Socket connection;
 
@@ -31,24 +29,12 @@ public class RequestHandler implements Runnable {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             String line = br.readLine();
-            if (line == null) {
-                return;
-            }
-
-            String url = HttpRequestUtils.getUrl(line);
+            HttpRequestHeader httpRequestHeader = HttpRequestHeaderParser.getHttpRequestHeader(line);
+            var url = httpRequestHeader.getUri();
 
             if (url.contains("/user/create")) {
-                String queryString = url.split(QUERY_STRING_DELIMITER)[1];
-                Map<String, String> params = HttpRequestUtils.parseQueryString(queryString);
-                logger.debug("User Info: {}", params);
-                User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
-                logger.debug("User : {}", user);
+                sendSignUpRequest(httpRequestHeader);
                 url = "/index.html";
-            }
-
-            while (!Strings.isNullOrEmpty(line)) {
-                line = br.readLine();
-                logger.debug("header : {}", line);
             }
 
             DataOutputStream dos = new DataOutputStream(out);
@@ -58,6 +44,12 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private void sendSignUpRequest(HttpRequestHeader httpRequestHeader) {
+        Map<String, String> params = httpRequestHeader.getParams();
+        User user = new User(params.get("userId"), params.get("password"), params.get("name"), params.get("email"));
+        logger.debug("User : {}", user);
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {

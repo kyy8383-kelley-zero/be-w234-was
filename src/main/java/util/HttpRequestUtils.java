@@ -3,7 +3,6 @@ package util;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,10 +22,6 @@ public class HttpRequestUtils {
      *            값은 name1=value1; name2=value2 형식임
      * @return
      */
-
-    public static String getUrl(String line) throws IOException {
-        return line.split(" ")[1];
-    }
 
     public static Map<String, String> parseCookies(String cookies) {
         return parseValues(cookies, ";");
