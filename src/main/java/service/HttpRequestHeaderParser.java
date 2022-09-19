@@ -10,11 +10,11 @@ import webserver.error.HttpRequestException;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class HttpRequestHeaderParser implements HttpRequestParser {
+public class HttpRequestHeaderParser{
     private static final String QUERY_STRING_DELIMITER = "\\?";
     private static final String DOT_DELIMITER = "\\.";
 
-    public HttpRequestHeader parseHttpRequestHeader(String line) {
+    public static HttpRequestHeader parseHttpRequestHeader(String line) {
         if (Strings.isNullOrEmpty(line)) {
             throw new HttpRequestException("header가 비어있습니다.");
         }
@@ -30,19 +30,19 @@ public class HttpRequestHeaderParser implements HttpRequestParser {
         return new HttpRequestHeader(method, uri, params, type);
     }
 
-    private String[] getHeaderLine(String line){
+    private static String[] getHeaderLine(String line){
         return line.split(" ");
     }
     
-    private Method getMethod(String line){
+    private static Method getMethod(String line){
         return Method.valueOf(getHeaderLine(line)[0]);
     }
 
-    private String getType(String line){
+    private static String getType(String line){
         return Stream.of(getHeaderLine(line)[1].split(DOT_DELIMITER)).reduce((first, last) -> last).get();
     }
 
-    private Map<String, String> getParams(String[] uriLine){
+    private static Map<String, String> getParams(String[] uriLine){
         if(uriLine.length > 1) {
             return HttpRequestUtils.parseQueryString(uriLine[1]);
         }
@@ -50,7 +50,7 @@ public class HttpRequestHeaderParser implements HttpRequestParser {
 
     }
 
-    private String getUri(String[] uriLine){
+    private static String getUri(String[] uriLine){
         return uriLine[0];
     }
 }

@@ -5,7 +5,6 @@ import model.http.HttpRequestHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.HttpRequestHeaderParser;
-import service.HttpRequestParser;
 
 import java.io.*;
 import java.net.Socket;
@@ -28,9 +27,8 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             DataOutputStream dos = new DataOutputStream(out);
-            HttpRequestParser httpRequestParser = new HttpRequestHeaderParser();
 
-            HttpRequestHeader httpRequestHeader = httpRequestParser.parseHttpRequestHeader(br.readLine());
+            HttpRequestHeader httpRequestHeader = HttpRequestHeaderParser.parseHttpRequestHeader(br.readLine());
             log.debug("HttpRequestHeader : {}", httpRequestHeader);
 
             String url = httpRequestHeader.getUri();
