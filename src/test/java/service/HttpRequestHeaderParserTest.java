@@ -22,7 +22,7 @@ class HttpRequestHeaderParserTest {
             HttpRequestHeader expected
     ) {
         HttpRequestParser httpRequestParser = new HttpRequestHeaderParser();
-        HttpRequestHeader sut = httpRequestParser.getHttpRequestHeader(headerLine);
+        HttpRequestHeader sut = httpRequestParser.parseHttpRequestHeader(headerLine);
         Assertions.assertEquals(expected, sut);
     }
 
@@ -35,7 +35,7 @@ class HttpRequestHeaderParserTest {
     ) {
         HttpRequestParser httpRequestParser = new HttpRequestHeaderParser();
         HttpRequestException httpRequestException = Assertions.assertThrows(HttpRequestException.class,
-                () -> httpRequestParser.getHttpRequestHeader(headerLine));
+                () -> httpRequestParser.parseHttpRequestHeader(headerLine));
         String message = httpRequestException.getMessage();
         Assertions.assertEquals(errorMessage, message);
 

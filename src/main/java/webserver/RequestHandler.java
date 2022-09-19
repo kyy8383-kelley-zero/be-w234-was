@@ -30,7 +30,7 @@ public class RequestHandler implements Runnable {
             DataOutputStream dos = new DataOutputStream(out);
             HttpRequestParser httpRequestParser = new HttpRequestHeaderParser();
 
-            HttpRequestHeader httpRequestHeader = httpRequestParser.getHttpRequestHeader(br.readLine());
+            HttpRequestHeader httpRequestHeader = httpRequestParser.parseHttpRequestHeader(br.readLine());
             log.debug("HttpRequestHeader : {}", httpRequestHeader);
 
             String url = httpRequestHeader.getUri();
