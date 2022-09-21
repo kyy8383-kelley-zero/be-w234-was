@@ -2,10 +2,10 @@ package service;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import model.http.HttpRequestHeader;
-import model.http.Method;
+import model.http.request.HttpRequest;
+import model.http.request.Method;
 import util.HttpRequestUtils;
-import webserver.error.HttpRequestException;
+import error.HttpRequestException;
 
 import java.util.Map;
 import java.util.stream.Stream;
@@ -14,7 +14,7 @@ public class HttpRequestHeaderParser{
     private static final String QUERY_STRING_DELIMITER = "\\?";
     private static final String DOT_DELIMITER = "\\.";
 
-    public static HttpRequestHeader parseHttpRequestHeader(String line) {
+    public static HttpRequest parseHttpRequestHeader(String line) {
         if (Strings.isNullOrEmpty(line)) {
             throw new HttpRequestException("header가 비어있습니다.");
         }
@@ -27,7 +27,7 @@ public class HttpRequestHeaderParser{
         Map<String, String> params = getParams(uriLine);
         String type = getType(line);
 
-        return new HttpRequestHeader(method, uri, params, type);
+        return new HttpRequest(method, uri, params, type);
     }
 
     private static String[] getHeaderLine(String line){

@@ -1,15 +1,15 @@
-package model.http;
+package model.http.request;
 
 import java.util.Map;
 import java.util.Objects;
 
-public class HttpRequestHeader {
+public class HttpRequest {
     private final Method method;
     private final String uri;
     private final Map<String, String> params;
     private final String contentType;
 
-    public HttpRequestHeader(Method method, String uri, Map<String, String> params, String contentType) {
+    public HttpRequest(Method method, String uri, Map<String, String> params, String contentType) {
         this.method = method;
         this.uri = uri;
         this.params = params;
@@ -18,7 +18,7 @@ public class HttpRequestHeader {
 
     @Override
     public String toString() {
-        return "HttpRequestHeader{" +
+        return "HttpRequest{" +
                 "method=" + method +
                 ", uri='" + uri + '\'' +
                 ", params=" + params +
@@ -46,7 +46,7 @@ public class HttpRequestHeader {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        HttpRequestHeader that = (HttpRequestHeader) o;
+        HttpRequest that = (HttpRequest) o;
         return method == that.method && Objects.equals(uri, that.uri) && Objects.equals(params, that.params) && Objects.equals(contentType, that.contentType);
     }
 

@@ -1,27 +1,27 @@
 package service;
 
 import com.google.common.collect.Maps;
-import model.http.HttpRequestHeader;
-import model.http.Method;
+import model.http.request.HttpRequest;
+import model.http.request.Method;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import webserver.error.HttpRequestException;
+import error.HttpRequestException;
 
 import java.util.Map;
 import java.util.stream.Stream;
 
-class HttpRequestHeaderParserTest {
+class HttpRequestParserTest {
 
     @ParameterizedTest(name = "{index} : {0}")
     @MethodSource("provideNormalParams")
     void parseHttpRequestHeader(
             String description,
             String headerLine,
-            HttpRequestHeader expected
+            HttpRequest expected
     ) {
-        HttpRequestHeader sut = HttpRequestHeaderParser.parseHttpRequestHeader(headerLine);
+        HttpRequest sut = HttpRequestHeaderParser.parseHttpRequestHeader(headerLine);
         Assertions.assertEquals(expected, sut);
     }
 
@@ -43,7 +43,7 @@ class HttpRequestHeaderParserTest {
         return Stream.of(
                 Arguments.arguments("query params가 없는 http request header를 parse 할 수 있다.",
                         "GET ./css/style.css HTTP/1.1",
-                        new HttpRequestHeader(
+                        new HttpRequest(
                                 Method.GET,
                                 "./css/style.css",
                                 Maps.newHashMap(),
@@ -51,7 +51,7 @@ class HttpRequestHeaderParserTest {
                 ),
                 Arguments.arguments("query params가 있는 http request header를 parse 할 수 있다.",
                         "GET /user/create?userId=kimkelley&password=password&name=kelley&email=kelley@naver.com",
-                        new HttpRequestHeader(
+                        new HttpRequest(
                                 Method.GET,
                                 "/user/create",
                                 Map.ofEntries(
