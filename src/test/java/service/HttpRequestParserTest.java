@@ -9,6 +9,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import error.HttpRequestException;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -20,8 +24,10 @@ class HttpRequestParserTest {
             String description,
             String headerLine,
             HttpRequest expected
-    ) {
-        HttpRequest sut = HttpRequestHeaderParser.parseHttpRequestHeader(headerLine);
+    ) throws IOException {
+        Reader inputString = new StringReader(headerLine);
+        BufferedReader reader = new BufferedReader(inputString);
+        HttpRequest sut = HttpRequestHeaderParser.parseHttpRequestHeader(reader);
         Assertions.assertEquals(expected, sut);
     }
 
@@ -32,8 +38,11 @@ class HttpRequestParserTest {
             String headerLine,
             String errorMessage
     ) {
+
+        Reader inputString = new StringReader(headerLine);
+        BufferedReader reader = new BufferedReader(inputString);
         HttpRequestException httpRequestException = Assertions.assertThrows(HttpRequestException.class,
-                () -> HttpRequestHeaderParser.parseHttpRequestHeader(headerLine));
+                () -> HttpRequestHeaderParser.parseHttpRequestHeader(reader));
         String message = httpRequestException.getMessage();
         Assertions.assertEquals(errorMessage, message);
 
@@ -41,13 +50,15 @@ class HttpRequestParserTest {
 
     private static Stream<Arguments> provideNormalParams() {
         return Stream.of(
-                Arguments.arguments("query params가 없는 http request header를 parse 할 수 있다.",
+                Arguments.arguments(
+                        "query params가 없는 http request header를 parse 할 수 있다.",
                         "GET ./css/style.css HTTP/1.1",
                         new HttpRequest(
                                 Method.GET,
                                 "./css/style.css",
                                 Maps.newHashMap(),
-                                "css")
+                                "css",
+                                Maps.newHashMap())
                 ),
                 Arguments.arguments("query params가 있는 http request header를 parse 할 수 있다.",
                         "GET /user/create?userId=kimkelley&password=password&name=kelley&email=kelley@naver.com",
@@ -59,7 +70,8 @@ class HttpRequestParserTest {
                                         Map.entry("password", "password"),
                                         Map.entry("name", "kelley"),
                                         Map.entry("email", "kelley@naver.com")),
-                                "com")
+                                "com",
+                                Maps.newHashMap())
                 )
         );
     }
