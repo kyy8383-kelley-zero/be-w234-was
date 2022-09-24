@@ -9,11 +9,14 @@ public class HttpRequest {
     private final Map<String, String> params;
     private final String contentType;
 
-    public HttpRequest(Method method, String uri, Map<String, String> params, String contentType) {
+    private Map<String, String> body;
+
+    public HttpRequest(Method method, String uri, Map<String, String> params, String contentType, Map<String, String> body) {
         this.method = method;
         this.uri = uri;
         this.params = params;
         this.contentType = contentType;
+        this.body = body;
     }
 
     @Override
@@ -38,8 +41,12 @@ public class HttpRequest {
         return params;
     }
 
+    public Map<String, String> getBody() {
+        return body;
+    }
+
     public String getContentType() {
-        return contentType;
+        return contentType.equals("html") ? contentType : "css";
     }
 
     @Override
@@ -52,6 +59,6 @@ public class HttpRequest {
 
     @Override
     public int hashCode() {
-        return Objects.hash(method, uri, params, contentType);
+        return Objects.hash(method, uri, params, contentType, body);
     }
 }
