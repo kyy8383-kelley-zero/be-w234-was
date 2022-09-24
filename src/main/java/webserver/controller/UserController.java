@@ -1,4 +1,4 @@
-package controller;
+package webserver.controller;
 
 import error.DuplicatedUserException;
 import error.FailedLoginException;

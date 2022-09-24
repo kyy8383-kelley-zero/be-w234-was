@@ -1,6 +1,6 @@
 package webserver;
 
-import controller.UserController;
+import webserver.controller.UserController;
 import model.http.request.HttpRequest;
 import model.http.request.Method;
 import model.http.response.HttpResponse;
